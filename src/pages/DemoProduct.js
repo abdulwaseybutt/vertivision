@@ -3,11 +3,11 @@ import NavBar from "../components/Navbar/NavBar";
 import Footer from "../components/Footer";
 import { useDocTitle } from "../components/CustomHook";
 import axios from "axios";
-import emailjs from 'emailjs-com';
+import emailjs from "emailjs-com";
 import Notiflix from "notiflix";
 
 const DemoProduct = (props) => {
-  useDocTitle("MBStudios - Demo our products");
+  useDocTitle("VertiVision Ventures - Demo our products");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -305,7 +305,9 @@ const DemoProduct = (props) => {
 
                   <div className="mt-5">
                     <h2 className="text-2xl">Send an E-mail</h2>
-                    <p className="text-gray-400">contact@mbstudios.co</p>
+                    <p className="text-gray-400">
+                      contact@vertivisionventures.com
+                    </p>
                   </div>
                 </div>
               </div>

@@ -26,7 +26,7 @@ function App() {
     });
   }, []);
 
-  useDocTitle("MBStudios | Web and Mobile Application Pioneers");
+  useDocTitle("VertiVision Ventures | Web and Mobile Application Pioneers");
 
   return (
     <>
