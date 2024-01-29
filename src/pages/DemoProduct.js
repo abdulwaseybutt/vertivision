@@ -1,21 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import NavBar from "../components/Navbar/NavBar";
 import Footer from "../components/Footer";
 import { useDocTitle } from "../components/CustomHook";
-import axios from "axios";
 import emailjs from "emailjs-com";
 import Notiflix from "notiflix";
 
 const DemoProduct = (props) => {
   useDocTitle("VertiVision Ventures - Demo our products");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [demoProducts, setDemoProducts] = useState([]);
   const [errors, setErrors] = useState([]);
+  const form = useRef();
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -33,7 +33,6 @@ const DemoProduct = (props) => {
 
   const clearInput = () => {
     setFirstName("");
-    setLastName("");
     setEmail("");
     setPhone("");
     setMessage("");
@@ -41,74 +40,36 @@ const DemoProduct = (props) => {
 
   function sendEmail(e) {
     e.preventDefault();
-    document.getElementById("submitBtn").disabled = true;
-    document.getElementById("submitBtn").innerHTML = "Loading...";
-    let fData = new FormData();
-    fData.append("first_name", firstName);
-    fData.append("last_name", lastName);
-    fData.append("email", email);
-    fData.append("phone_number", phone);
-    fData.append("message", message);
-    fData.append("products", demoProducts);
+    setIsLoading(true);
 
     emailjs
       .sendForm(
-        "service_vmo3dzb",
-        "template_c2bmrxn",
-        e.target,
-        "user_uE0bSPGbhRTmAF3I2fd3s"
+        "service_g3btxpr",
+        "template_e3fkpmv",
+        form.current,
+        "gZT2r2GU9QhyS57bY"
       )
       .then(
         (result) => {
+          clearInput();
           console.log(result.text);
-          Notiflix.Report.success(
-            "Success",
-            '"Thanks for sending a message, we\'ll be in touch soon."',
-            "Okay"
+          Notiflix.Notify.success(
+            "Email Recieved! We'll get back to you shortly."
           );
         },
         (error) => {
+          clearInput();
+          Notiflix.Notify.failure(
+            "Error submitting form. Please try again later."
+          );
           console.log(error.text);
-          Notiflix.Report.failure(
-            "An error occured",
-            "Please try sending the message again.",
-            "Okay"
-          );
         }
-      );
-
-    axios({
-      method: "post",
-      url: process.env.REACT_APP_DEMO_REQUEST_API,
-      data: fData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then(function (response) {
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("submitBtn").innerHTML = "send message";
-        clearInput();
-        //handle success
-        Notiflix.Report.success("Success", response.data.message, "Okay");
-      })
-      .catch(function (error) {
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("submitBtn").innerHTML = "send message";
-        //handle error
-        const { response } = error;
-        if (response.status === 500) {
-          Notiflix.Report.failure(
-            "An error occurred",
-            response.data.message,
-            "Okay"
-          );
-        }
-        if (response.data.errors !== null) {
-          setErrors(response.data.errors);
-        }
+      )
+      .finally(() => {
+        setIsLoading(false);
       });
   }
+
   return (
     <>
       <div>
@@ -119,7 +80,7 @@ const DemoProduct = (props) => {
           className="container mx-auto my-8 px-4 lg:px-20"
           data-aos="zoom-in"
         >
-          <form onSubmit={sendEmail} id="demoProductForm">
+          <form ref={form} onSubmit={sendEmail} id="demoProductForm">
             <div className="w-full bg-white p-8 my-4 md:px-12 lg:w-9/12 lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
               <div className="flex">
                 <h1 className="font-bold text-center lg:text-left text-blue-900 uppercase text-4xl">
@@ -128,15 +89,16 @@ const DemoProduct = (props) => {
               </div>
               <div className="flex items-center my-4">
                 <input
-                  id="checkbox-1"
-                  aria-describedby="checkbox-1"
+                  name="business-management"
+                  id="business-management"
+                  aria-describedby="business-management"
                   type="checkbox"
                   className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
                   value="business_management_system"
                   onChange={handleChange}
                 />
                 <label
-                  htmlFor="checkbox-1"
+                  htmlFor="business-management"
                   className="ml-3 text-lg font-medium text-gray-900"
                 >
                   Business Management System
@@ -144,15 +106,16 @@ const DemoProduct = (props) => {
               </div>
               <div className="flex items-center my-4">
                 <input
-                  id="checkbox-1"
-                  aria-describedby="checkbox-1"
+                  name="school-management"
+                  id="school-management"
+                  aria-describedby="school-management"
                   type="checkbox"
                   className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
                   value="school_management_portal"
                   onChange={handleChange}
                 />
                 <label
-                  htmlFor="checkbox-1"
+                  htmlFor="school-management"
                   className="ml-3 text-lg font-medium text-gray-900"
                 >
                   School Management Portal
@@ -160,15 +123,16 @@ const DemoProduct = (props) => {
               </div>
               <div className="flex items-center my-4">
                 <input
-                  id="checkbox-1"
-                  aria-describedby="checkbox-1"
+                  name="payroll-management"
+                  id="payroll-management"
+                  aria-describedby="payroll-management"
                   type="checkbox"
                   className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
                   value="payroll_management_system"
                   onChange={handleChange}
                 />
                 <label
-                  htmlFor="checkbox-1"
+                  htmlFor="payroll-management"
                   className="ml-3 text-lg font-medium text-gray-900"
                 >
                   Payroll Management System
@@ -176,15 +140,16 @@ const DemoProduct = (props) => {
               </div>
               <div className="flex items-center my-4">
                 <input
-                  id="checkbox-1"
-                  aria-describedby="checkbox-1"
+                  name="event-management"
+                  id="event-management"
+                  aria-describedby="event-management"
                   type="checkbox"
                   className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
                   value="event_management_system"
                   onChange={handleChange}
                 />
                 <label
-                  htmlFor="checkbox-1"
+                  htmlFor="event-management"
                   className="ml-3 text-lg font-medium text-gray-900"
                 >
                   Event Management System
@@ -197,10 +162,10 @@ const DemoProduct = (props) => {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2 mt-5">
                 <div>
                   <input
-                    name="first_name"
+                    name="from_name"
                     className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
                     type="text"
-                    placeholder="First Name*"
+                    placeholder="Name*"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     onKeyUp={clearErrors}
@@ -209,25 +174,9 @@ const DemoProduct = (props) => {
                     <p className="text-red-500 text-sm">{errors.first_name}</p>
                   )}
                 </div>
-
                 <div>
                   <input
-                    name="last_name"
-                    className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
-                    type="text"
-                    placeholder="Last Name*"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    onKeyUp={clearErrors}
-                  />
-                  {errors && (
-                    <p className="text-red-500 text-sm">{errors.last_name}</p>
-                  )}
-                </div>
-
-                <div>
-                  <input
-                    name="email"
+                    name="user_email"
                     className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
                     type="email"
                     placeholder="Email*"
@@ -274,10 +223,14 @@ const DemoProduct = (props) => {
                 <button
                   type="submit"
                   id="submitBtn"
-                  className="uppercase text-sm font-bold tracking-wide bg-gray-500 hover:bg-blue-900 text-gray-100 p-3 rounded-lg w-full 
-                                    focus:outline-none focus:shadow-outline"
+                  disabled={isLoading}
+                  className={`${
+                    isLoading ? "disabled" : ""
+                  } uppercase text-sm font-bold tracking-wide bg-gray-500 ${
+                    !isLoading ? " hover:bg-blue-900" : ""
+                  }  text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:shadow-outline`}
                 >
-                  Send Message
+                  {isLoading ? "Sending..." : "Send Message"}
                 </button>
               </div>
             </div>
