@@ -44,10 +44,10 @@ const DemoProduct = (props) => {
 
     emailjs
       .sendForm(
-        "service_g3btxpr",
-        "template_e3fkpmv",
+        "service_o0q4i1h",
+        "template_zbfwld8",
         form.current,
-        "gZT2r2GU9QhyS57bY"
+        "EZmmsn7eN1p81tZp7"
       )
       .then(
         (result) => {
